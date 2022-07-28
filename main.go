@@ -266,8 +266,7 @@ func generateHelpers(gen *protogen.Plugin, file *protogen.File) *protogen.Genera
 								g.P("if req.", requestField.GoName, " != 0 {")
 								g.P("item.", requestField.GoName, " = req.Get", requestField.GoName, "()")
 								g.P("}")
-							case "[]uint32":
-							case "[]string":
+							case "[]string", "[]uint32":
 								g.P("if len(req.", requestField.GoName, ") > 0 {")
 								g.P("item.", requestField.GoName, " = req.Get", requestField.GoName, "()")
 								g.P("}")
@@ -315,8 +314,7 @@ func generateHelpers(gen *protogen.Plugin, file *protogen.File) *protogen.Genera
 						g.P("if request.", requestField.GoName, " != 0 {")
 						g.P("x.", requestField.GoName, " = request.Get", requestField.GoName, "()")
 						g.P("}")
-					case "[]uint32":
-					case "[]string":
+					case "[]string", "[]uint32":
 						g.P("if len(request.", requestField.GoName, ") > 0 {")
 						g.P("x.", requestField.GoName, " = request.Get", requestField.GoName, "()")
 						g.P("}")
@@ -353,8 +351,7 @@ func generateHelpers(gen *protogen.Plugin, file *protogen.File) *protogen.Genera
 								g.P("if request.", requestField.GoName, " != 0 {")
 								g.P("x.", requestField.GoName, " = request.Get", requestField.GoName, "()")
 								g.P("}")
-							case "[]uint32":
-							case "[]string":
+							case "[]string", "[]uint32":
 								g.P("if len(request.", requestField.GoName, ") > 0 {")
 								g.P("x.", requestField.GoName, " = request.Get", requestField.GoName, "()")
 								g.P("}")
