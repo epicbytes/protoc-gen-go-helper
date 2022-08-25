@@ -1,4 +1,4 @@
-module gitlab.cryptojeton.shop/crypterium/protoc-gen-go-helpers
+module github.com/epicbytes/protoc-gen-go-helper
 
 go 1.18
 

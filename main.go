@@ -14,7 +14,7 @@ import (
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/descriptorpb"
 
-	"gitlab.cryptojeton.shop/crypterium/protoc-gen-go-helpers/common"
+	"github.com/epicbytes/protoc-gen-go-helper/common"
 )
 
 const (
