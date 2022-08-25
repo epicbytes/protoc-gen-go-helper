@@ -1,4 +1,4 @@
-module github.com/epicbytes/protoc-gen-go-helper
+module github.com/epicbytes/protoc-gen-go-helpers
 
 go 1.18
 

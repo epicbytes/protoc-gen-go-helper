@@ -2,7 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/descriptor.proto";
 
-option go_package = "github.com/epicbytes/protoc-gen-go-helper/common";
+option go_package = "github.com/epicbytes/protoc-gen-go-helpers/common";
 
 message ParserOption {
   bool fiber = 1;
