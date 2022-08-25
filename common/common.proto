@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "gitlab.cryptojeton.shop/crypterium/protoc-gen-go-helpers/common";
+
+message ParserOption {
+  bool fiber = 1;
+  bool swag = 2;
+  bool paging = 3;
+}
+
+extend google.protobuf.MessageOptions {
+  optional ParserOption parser = 50000;
+}
+
+extend google.protobuf.FieldOptions {
+  optional ModelFieldOption field_option = 50001;
+}
+
+message ModelFieldOption {
+  optional string source = 1;
+  optional bool is_required = 2;
+  optional string validate = 3;
+  optional string tags = 4;
+}
+
+// swagger:model AvailableProvider
+message AvailableProvider {
+  // required: true
+  string label = 1;
+  // required: true
+  string value = 2;
+  // required: true
+  string provider_type = 3;
+}
+
+// swagger:model Pagination
+message Pagination {
+  int64 limit = 1;
+  int64 skip = 2;
+  int64 total_items = 3;
+}
+
+// swagger:model CommentedResponse
+message CommentedResponse {
+  // required: true
+  bool result = 1;
+  // required: true
+  string comment = 2;
+}
+
+// swagger:model FileResponse
+message FileResponse {
+  // required: true
+  bytes file = 1;
+  // required: true
+  string mimeType = 2;
+}
+
+// swagger:parameters FileRequest
+message FileRequest {
+  // required: true
+  // In: formData
+  // swagger:file
+  bytes file = 1; // @gotags: validate:"required"
+  // In: formData
+  string path = 2; // @gotags: validate:"required"
+  // In: formData
+  string fileName = 3;
+}

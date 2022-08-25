@@ -11,6 +11,10 @@ import (
 	"unicode"
 
 	"google.golang.org/protobuf/compiler/protogen"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/descriptorpb"
+
+	"gitlab.cryptojeton.shop/crypterium/protoc-gen-go-helpers/common"
 )
 
 const (
@@ -128,6 +132,22 @@ func generateHelpers(gen *protogen.Plugin, file *protogen.File) *protogen.Genera
 
 		const stringType = "string"
 		const uint32Type = "uint32"
+		options := msg.Desc.Options().(*descriptorpb.MessageOptions)
+		ext1 := proto.GetExtension(options, common.E_Parser).(*common.ParserOption)
+		if ext1 != nil {
+			g.P("//Fiber ", ext1.Fiber)
+			g.P("//Swag ", ext1.Swag)
+		}
+		/*var	po *common.ParserOption
+		options.ProtoReflect(). .Range(func(fd protoreflect.FieldDescriptor, v protoreflect.Value) bool {
+			if !fd.IsExtension() {
+				return false
+			}
+			fmt.Println(fd, v)
+			g.P("//", fd, v)
+			// Make use of fd and v based on their reflective properties.
+			return true
+		})*/
 
 		if strings.Contains(string(msg.Comments.Trailing), "@feature:\"keeper=") {
 
