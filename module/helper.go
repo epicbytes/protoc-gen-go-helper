@@ -178,10 +178,18 @@ func (m mod) Execute(targets map[string]pgs.File, packages map[string]pgs.Packag
 								Return(Err()),
 							)
 
-							group.Err().Op("=").Id("ctx").Dot("BodyParser").Call(Id("x"))
-							group.If(Err().Op("!=").Nil()).Block(
-								Return(Err()),
-							)
+							var hasBodyFields = false
+							for _, field := range feature.fieldsList {
+								if field.Source == "body" {
+									hasBodyFields = true
+								}
+							}
+							if hasBodyFields {
+								group.Err().Op("=").Id("ctx").Dot("BodyParser").Call(Id("x"))
+								group.If(Err().Op("!=").Nil()).Block(
+									Return(Err()),
+								)
+							}
 
 							for _, field := range feature.fieldsList {
 								if field.Source == "path" {
