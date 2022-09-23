@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/dave/jennifer v1.5.1
-	github.com/epicbytes/protocommon v0.0.0
+	github.com/epicbytes/protocommon v0.0.11
 	github.com/lyft/protoc-gen-star v0.6.1
 )
 
@@ -15,6 +15,4 @@ require (
 	google.golang.org/protobuf v1.28.1 // indirect
 )
 
-replace (
-	github.com/epicbytes/protocommon => ../protocommon
-)
+replace github.com/epicbytes/protocommon => ../protocommon

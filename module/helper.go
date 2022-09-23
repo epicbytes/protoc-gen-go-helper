@@ -111,7 +111,6 @@ func (m mod) Execute(targets map[string]pgs.File, packages map[string]pgs.Packag
 								group.Id("opts").Dot("SetLimit").Call(Id("limit"))
 								group.Id("opts").Dot("SetSkip").Call(Id("x").Dot("Skip"))
 								group.Id("opts").Dot("SetSort").Call(Qual(pathToBson, "M").Values(Dict{Id("_id"): Lit(1)}))
-								group.Return(Id("opts"))
 							}
 							group.Return(Id("opts"))
 						})
@@ -135,7 +134,9 @@ func (m mod) Execute(targets map[string]pgs.File, packages map[string]pgs.Packag
 						).Id(fmt.Sprintf("PickFrom%s", feature.parser.PickWith)).ParamsFunc(func(group *Group) {
 							if feature.parser.GetList() {
 								group.Id("request").Index().Op("*").Id(feature.parser.PickWith)
-								group.Id("pagination").Op("*").Qual(pathToCommon, "Pagination")
+								if feature.parser.GetPaging() {
+									group.Id("pagination").Op("*").Qual(pathToCommon, "Pagination")
+								}
 							} else {
 								group.Id("request").Op("*").Id(feature.parser.PickWith)
 							}
@@ -155,7 +156,9 @@ func (m mod) Execute(targets map[string]pgs.File, packages map[string]pgs.Packag
 									}),
 								)
 								group.Id("x").Dot("Items").Op("=").Id("items")
-								group.Id("x").Dot("Pagination").Op("=").Id("pagination")
+								if feature.parser.GetPaging() {
+									group.Id("x").Dot("Pagination").Op("=").Id("pagination")
+								}
 							} else {
 								for _, field := range feature.fieldsList {
 									group.Id("x").Dot(Pascal(field.Name)).Op("=").Id("request").Dot(fmt.Sprintf("Get%s()", Pascal(field.Name)))
