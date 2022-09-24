@@ -128,6 +128,15 @@ func (v *dataExtractor) VisitField(f pgs.Field) (pgs.Visitor, error) {
 			}
 			v.features[msgName].fieldsList = append(v.features[msgName].fieldsList, model)
 		}
+		if !tval.GetPicked() && !tval.GetMerged() {
+			model := &MergedPickedFieldData{
+				Name:      f.Name().String(),
+				ProtoType: f.Descriptor().Type.String(),
+				Repeated:  f.Type().IsRepeated(),
+				Source:    tval.GetSource(),
+			}
+			v.features[msgName].fieldsList = append(v.features[msgName].fieldsList, model)
+		}
 	}
 
 	return v, nil

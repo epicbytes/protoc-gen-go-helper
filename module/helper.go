@@ -167,6 +167,7 @@ func (m mod) Execute(targets map[string]pgs.File, packages map[string]pgs.Packag
 						})
 					}
 					if feature.parser.GetFiber() {
+						m.Debug(modelName, feature)
 						file.Func().Params(
 							Id("x").Op("*").Id(modelName),
 						).Id("BindFromFiber").Params(
@@ -178,8 +179,9 @@ func (m mod) Execute(targets map[string]pgs.File, packages map[string]pgs.Packag
 								Return(Err()),
 							)
 
-							var hasBodyFields = false
+							hasBodyFields := false
 							for _, field := range feature.fieldsList {
+								m.Debug(modelName, field.Name, field.Source)
 								if field.Source == "body" {
 									hasBodyFields = true
 								}
