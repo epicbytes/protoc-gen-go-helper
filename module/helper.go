@@ -105,12 +105,12 @@ func (m mod) Execute(targets map[string]pgs.File, packages map[string]pgs.Packag
 							group.Var().Id("opts").Id("=").Op("&").Qual(pathToOptions, "FindOptions").Values()
 							if feature.parser.GetList() {
 								group.Var().Id("limit").Int64().Op("=").Lit(20)
-								group.If(Id("x").Dot("Limit").Op(">").Lit(0)).Block(
-									Id("limit").Op("=").Id("x").Dot("Limit"),
+								group.If(Id("x").Dot("Pagination").Dot("Limit").Op(">").Lit(0)).Block(
+									Id("limit").Op("=").Id("x").Dot("Pagination").Dot("Limit"),
 								)
 								group.Id("opts").Dot("SetLimit").Call(Id("limit"))
-								group.Id("opts").Dot("SetSkip").Call(Id("x").Dot("Skip"))
-								group.Id("opts").Dot("SetSort").Call(Qual(pathToBson, "M").Values(Dict{Id("_id"): Lit(1)}))
+								group.Id("opts").Dot("SetSkip").Call(Id("x").Dot("Pagination").Dot("Skip"))
+								group.Id("opts").Dot("SetSort").Call(Qual(pathToBson, "M").Values(Dict{Lit("_id"): Lit(1)}))
 							}
 							group.Return(Id("opts"))
 						})
@@ -181,7 +181,6 @@ func (m mod) Execute(targets map[string]pgs.File, packages map[string]pgs.Packag
 
 							hasBodyFields := false
 							for _, field := range feature.fieldsList {
-								m.Debug(modelName, field.Name, field.Source)
 								if field.Source == "body" {
 									hasBodyFields = true
 								}
@@ -203,9 +202,9 @@ func (m mod) Execute(targets map[string]pgs.File, packages map[string]pgs.Packag
 
 								}
 								if field.Source == "context" {
-									group.If(Id("ctx").Dot("Locals").Call(Lit(field.Name))).Op("!=").Nil().Block(
-										Id("x").Dot(Pascal(field.Name)).Op("=").Id("ctx").Dot("Locals").Call(Lit(field.Name)).Assert(Uint32()),
-									)
+									group.If(Id("ctx").Dot("Locals").Call(Lit(field.Name))).Op("!=").Nil().BlockFunc(func(group *Group) {
+										group.Id("x").Dot(Pascal(field.Name)).Op("=").Id("ctx").Dot("Locals").Call(Lit(field.Name)).Assert(Id(ProtoTypesMap[field.ProtoType]))
+									})
 								}
 							}
 

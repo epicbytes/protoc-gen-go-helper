@@ -15,6 +15,18 @@ var (
 	moduleStr  = []byte("module")
 )
 
+var ProtoTypesMap = map[string]string{
+	"TYPE_DOUBLE": "float64",
+	"TYPE_FLOAT":  "float32",
+	"TYPE_INT64":  "int64",
+	"TYPE_UINT64": "uint64",
+	"TYPE_INT32":  "int32",
+	"TYPE_BOOL":   "bool",
+	"TYPE_STRING": "string",
+	"TYPE_BYTES":  "byte",
+	"TYPE_UINT32": "uint32",
+}
+
 type MergedPickedFieldData struct {
 	Name      string
 	ProtoType string
