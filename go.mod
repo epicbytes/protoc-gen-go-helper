@@ -14,5 +14,3 @@ require (
 	golang.org/x/text v0.3.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 )
-
-replace github.com/epicbytes/protocommon => ../protocommon
