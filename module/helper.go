@@ -3,6 +3,7 @@ package module
 import (
 	"fmt"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	. "github.com/dave/jennifer/jen"
@@ -68,8 +69,16 @@ func (m mod) Execute(targets map[string]pgs.File, packages map[string]pgs.Packag
 		pathToFiber := "github.com/gofiber/fiber/v2"
 		file.ImportName(pathToFiber, "fiber")
 
+		keys := make([]string, 0, len(extrData.features))
+		for k := range extrData.features {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+
 		if extrData.features != nil {
-			for modelName, feature := range extrData.features {
+			for _, modelName := range keys {
+				feature := extrData.features[modelName]
+				m.Debug("MODELNAME", modelName)
 				// Add helpers for Keeper
 				if feature.features != nil {
 					file.Func().Params(Id("x").Op("*").Id(modelName)).Id("EncryptFields").Params(
