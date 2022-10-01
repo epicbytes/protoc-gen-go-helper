@@ -104,7 +104,7 @@ func (m mod) Execute(targets map[string]pgs.File, packages map[string]pgs.Packag
 							Id("Body").Id(modelName),
 						)
 					}
-					if feature.parser.GetPaging() {
+					if feature.parser.GetPaging() && strings.HasSuffix(modelName, "Request") {
 						file.Func().Params(Id("x").Op("*").Id(modelName)).Id("GetFilter").Params().Params(Qual(pathToBson, "M")).BlockFunc(func(group *Group) {
 							group.Id("query").Op(":=").Qual(pathToBson, "M").Values()
 							group.Return(Id("query"))
@@ -114,11 +114,11 @@ func (m mod) Execute(targets map[string]pgs.File, packages map[string]pgs.Packag
 							group.Var().Id("opts").Id("=").Op("&").Qual(pathToOptions, "FindOptions").Values()
 							if feature.parser.GetList() {
 								group.Var().Id("limit").Int64().Op("=").Lit(20)
-								group.If(Id("x").Dot("Pagination").Dot("Limit").Op(">").Lit(0)).Block(
-									Id("limit").Op("=").Id("x").Dot("Pagination").Dot("Limit"),
+								group.If(Id("x").Dot("Limit").Op(">").Lit(0)).Block(
+									Id("limit").Op("=").Id("x").Dot("Limit"),
 								)
 								group.Id("opts").Dot("SetLimit").Call(Id("limit"))
-								group.Id("opts").Dot("SetSkip").Call(Id("x").Dot("Pagination").Dot("Skip"))
+								group.Id("opts").Dot("SetSkip").Call(Id("x").Dot("Skip"))
 								group.Id("opts").Dot("SetSort").Call(Qual(pathToBson, "M").Values(Dict{Lit("_id"): Lit(1)}))
 							}
 							group.Return(Id("opts"))
