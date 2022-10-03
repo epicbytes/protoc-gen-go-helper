@@ -133,7 +133,7 @@ func (m mod) Execute(targets map[string]pgs.File, packages map[string]pgs.Packag
 							group.If(Id("x").Op("==").Nil()).Block(Return())
 
 							for _, field := range feature.fieldsList {
-								if field.Source != "body" {
+								if !field.Merged {
 									continue
 								}
 								group.Id("x").Dot(Pascal(field.Name)).Op("=").Id("request").Dot(fmt.Sprintf("Get%s()", Pascal(field.Name)))
@@ -161,6 +161,9 @@ func (m mod) Execute(targets map[string]pgs.File, packages map[string]pgs.Packag
 										groupFunc.Var().Id("item").Op("=").New(Id(fmt.Sprintf("%s_ListEntity", modelName)))
 										if extrData.features[fmt.Sprintf("%s_ListEntity", modelName)] != nil {
 											for _, field := range extrData.features[fmt.Sprintf("%s_ListEntity", modelName)].fieldsList {
+												if !field.Picked {
+													continue
+												}
 												groupFunc.Id("item").Dot(Pascal(field.Name)).Op("=").Id("req").Dot(fmt.Sprintf("Get%s()", Pascal(field.Name)))
 											}
 										}
@@ -173,6 +176,9 @@ func (m mod) Execute(targets map[string]pgs.File, packages map[string]pgs.Packag
 								}
 							} else {
 								for _, field := range feature.fieldsList {
+									if !field.Picked {
+										continue
+									}
 									group.Id("x").Dot(Pascal(field.Name)).Op("=").Id("request").Dot(fmt.Sprintf("Get%s()", Pascal(field.Name)))
 								}
 							}

@@ -33,6 +33,8 @@ type MergedPickedFieldData struct {
 	Type      string
 	Repeated  bool
 	Source    string
+	Merged    bool
+	Picked    bool
 }
 
 // ModulePath returns the module path from the gomod file text.

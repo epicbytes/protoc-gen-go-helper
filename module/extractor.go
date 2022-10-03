@@ -105,6 +105,8 @@ func (v *dataExtractor) VisitField(f pgs.Field) (pgs.Visitor, error) {
 				ProtoType: f.Descriptor().Type.String(),
 				Repeated:  f.Type().IsRepeated(),
 				Source:    tval.GetSource(),
+				Merged:    tval.GetMerged(),
+				Picked:    tval.GetPicked(),
 			}
 
 			if f.Type().IsEmbed() {
@@ -120,6 +122,8 @@ func (v *dataExtractor) VisitField(f pgs.Field) (pgs.Visitor, error) {
 				ProtoType: f.Descriptor().Type.String(),
 				Repeated:  f.Type().IsRepeated(),
 				Source:    tval.GetSource(),
+				Merged:    tval.GetMerged(),
+				Picked:    tval.GetPicked(),
 			}
 
 			if f.Type().IsEmbed() {
@@ -134,6 +138,8 @@ func (v *dataExtractor) VisitField(f pgs.Field) (pgs.Visitor, error) {
 				ProtoType: f.Descriptor().Type.String(),
 				Repeated:  f.Type().IsRepeated(),
 				Source:    tval.GetSource(),
+				Merged:    tval.GetMerged(),
+				Picked:    tval.GetPicked(),
 			}
 			v.features[msgName].fieldsList = append(v.features[msgName].fieldsList, model)
 		}
