@@ -64,6 +64,8 @@ func (m mod) Execute(targets map[string]pgs.File, packages map[string]pgs.Packag
 		file.ImportName(pathToJson, "json")
 		pathToBson := "go.mongodb.org/mongo-driver/bson"
 		file.ImportName(pathToBson, "bson")
+		pathToPrimitive := "go.mongodb.org/mongo-driver/bson/primitive"
+		file.ImportName(pathToPrimitive, "primitive")
 		pathToOptions := "go.mongodb.org/mongo-driver/mongo/options"
 		file.ImportName(pathToOptions, "options")
 		pathToFiber := "github.com/gofiber/fiber/v2"
@@ -78,7 +80,7 @@ func (m mod) Execute(targets map[string]pgs.File, packages map[string]pgs.Packag
 		if extrData.features != nil {
 			for _, modelName := range keys {
 				feature := extrData.features[modelName]
-				m.Debug("MODELNAME", modelName)
+				//m.Debug("MODELNAME", modelName)
 				// Add helpers for Keeper
 				if feature.features != nil {
 					file.Func().Params(Id("x").Op("*").Id(modelName)).Id("EncryptFields").Params(
@@ -107,6 +109,23 @@ func (m mod) Execute(targets map[string]pgs.File, packages map[string]pgs.Packag
 					if feature.parser.GetPaging() && strings.HasSuffix(modelName, "Request") {
 						file.Func().Params(Id("x").Op("*").Id(modelName)).Id("GetFilter").Params().Params(Qual(pathToBson, "M")).BlockFunc(func(group *Group) {
 							group.Id("query").Op(":=").Qual(pathToBson, "M").Values()
+							for _, field := range feature.fieldsList {
+								if field.Name == "skip" || field.Name == "limit" {
+									continue
+								}
+								switch field.ProtoType {
+								case "TYPE_STRING":
+									group.If(Len(Id("x").Dot(Pascal(field.Name))).Op(">").Lit(0)).BlockFunc(func(group2 *Group) {
+										group2.Id("query").Index(Lit(field.Name)).Op("=").Qual(pathToPrimitive, "Regex").Values(DictFunc(func(dict Dict) {
+											dict[Id("Pattern")] = Id("x").Dot(Pascal(field.Name))
+											dict[Id("Options")] = Lit("")
+										}))
+									})
+								default:
+								}
+								m.Debug(modelName, field.Name, field.Type)
+							}
+
 							group.Return(Id("query"))
 						})
 

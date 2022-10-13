@@ -61,6 +61,10 @@ func (v *dataExtractor) VisitMessage(f pgs.Message) (pgs.Visitor, error) {
 
 	}
 
+	if f.FullyQualifiedName() == ".finance.PaymentProviderEntity.Additional" {
+		v.Debug(f.Descriptor().Options)
+	}
+
 	if v.features[msgName] == nil {
 		v.features[msgName] = &ModelFeatureCollection{}
 	}
