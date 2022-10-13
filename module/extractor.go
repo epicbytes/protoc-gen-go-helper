@@ -2,6 +2,7 @@ package module
 
 import (
 	"fmt"
+	"strings"
 
 	pgs "github.com/lyft/protoc-gen-star"
 	pgsgo "github.com/lyft/protoc-gen-star/lang/go"
@@ -55,20 +56,13 @@ func (v *dataExtractor) VisitMessage(f pgs.Message) (pgs.Visitor, error) {
 
 	msgName := f.Name().String()
 
-	if msgName == "ListEntity" {
-
+	if len(strings.Split(f.FullyQualifiedName(), ".")) > 3 {
 		msgName = fmt.Sprintf("%s_%s", f.Parent().Name().String(), f.Name().String())
-
-	}
-
-	if f.FullyQualifiedName() == ".finance.PaymentProviderEntity.Additional" {
-		v.Debug(f.Descriptor().Options)
 	}
 
 	if v.features[msgName] == nil {
 		v.features[msgName] = &ModelFeatureCollection{}
 	}
-
 	if findedFeatures != nil {
 		v.features[msgName].features = findedFeatures
 	}
