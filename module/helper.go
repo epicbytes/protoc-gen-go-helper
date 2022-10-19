@@ -114,6 +114,10 @@ func (m mod) Execute(targets map[string]pgs.File, packages map[string]pgs.Packag
 									continue
 								}
 								switch field.ProtoType {
+								case "TYPE_UINT32":
+									group.If(Id("x").Dot(Pascal(field.Name)).Op(">").Lit(0)).BlockFunc(func(group2 *Group) {
+										group2.Id("query").Index(Lit(field.Name)).Op("=").Id("x").Dot(Pascal(field.Name))
+									})
 								case "TYPE_STRING":
 									group.If(Len(Id("x").Dot(Pascal(field.Name))).Op(">").Lit(0)).BlockFunc(func(group2 *Group) {
 										group2.Id("query").Index(Lit(field.Name)).Op("=").Qual(pathToPrimitive, "Regex").Values(DictFunc(func(dict Dict) {
