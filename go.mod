@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/dave/jennifer v1.5.1
-	github.com/epicbytes/protocommon v0.0.11
+	github.com/epicbytes/protocommon v0.0.20
 	github.com/lyft/protoc-gen-star v0.6.1
 )
 
