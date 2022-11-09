@@ -70,6 +70,8 @@ func (m mod) Execute(targets map[string]pgs.File, packages map[string]pgs.Packag
 		file.ImportName(pathToOptions, "options")
 		pathToFiber := "github.com/gofiber/fiber/v2"
 		file.ImportName(pathToFiber, "fiber")
+		pathToDeepCopy := "github.com/barkimedes/go-deepcopy"
+		file.ImportName(pathToDeepCopy, "deepcopy")
 
 		keys := make([]string, 0, len(extrData.features))
 		for k := range extrData.features {
@@ -86,14 +88,32 @@ func (m mod) Execute(targets map[string]pgs.File, packages map[string]pgs.Packag
 					file.Func().Params(Id("x").Op("*").Id(modelName)).Id("EncryptFields").Params(
 						Id("ctx").Qual("context", "Context"),
 						Id("keepr").Qual(pathToKeeper, "Keeper"),
-					).BlockFunc(func(group *Group) {
-						group.Id("keepr").Dot("TransitEncrypt").Call(Id("ctx"), Id("x"), Lit(feature.features.KeeperKey))
+					).Params(Op("*").Id(modelName)).BlockFunc(func(group *Group) {
+						group.List(Id("str"), Err()).Op(":=").Qual(pathToDeepCopy, "Anything").Call(Id("x"))
+						group.If(Err().Op("!=").Nil()).Block(
+							Qual("fmt", "Println").Call(Err()),
+						)
+						group.Id("keepr").Dot("TransitEncrypt").Call(Id("ctx"), Id("str"), Lit(feature.features.KeeperKey))
+						group.Return(Id("str").Assert(Op("*").Id(modelName)))
 					})
 					file.Func().Params(Id("x").Op("*").Id(modelName)).Id("DecryptFields").Params(
 						Id("ctx").Qual("context", "Context"),
 						Id("keepr").Qual(pathToKeeper, "Keeper"),
-					).BlockFunc(func(group *Group) {
-						group.Id("keepr").Dot("TransitDecrypt").Call(Id("ctx"), Id("x"), Lit(feature.features.KeeperKey))
+					).Params(Op("*").Id(modelName)).BlockFunc(func(group *Group) {
+						group.List(Id("str"), Err()).Op(":=").Qual(pathToDeepCopy, "Anything").Call(Id("x"))
+						group.If(Err().Op("!=").Nil()).Block(
+							Qual("fmt", "Println").Call(Err()),
+						)
+						group.Id("keepr").Dot("TransitDecrypt").Call(Id("ctx"), Id("str"), Lit(feature.features.KeeperKey))
+						group.Return(Id("str").Assert(Op("*").Id(modelName)))
+						/*
+							str, err := deepcopy.Anything(x)
+								if err != nil {
+									fmt.Println(err)
+								}
+								keepr.TransitDecrypt(ctx, str, "providers_token")
+								return str.(*MerchantEntity)
+						*/
 					})
 				}
 				// Parser features
